@@ -1,0 +1,72 @@
+//CC50 GREEDY Project*/
+
+#include <stdio.h>
+
+int main (void)
+{
+  float value,
+        coin_25 = 0.25,
+        coin_10 = 0.10,
+        coin_05 = 0.05,
+        coin_01 = 0.01;
+
+    int num_coins_25 = 0, //num = numbers of coins.
+        num_coins_10 = 0,
+        num_coins_05 = 0,
+        num_coins_01 = 0,
+        num_total_coins = 0;  
+
+    printf("Digite o valor do troco: ");
+    scanf("%f",&value);
+
+  do
+   {
+    if (value >= coin_25)
+    {
+     value-=coin_25;
+     num_coins_25++;
+     num_total_coins++;
+    }
+   } while (value >= coin_25);
+
+  do
+   {
+    if (value >= coin_10)
+    {
+     value-=coin_10;
+     num_coins_10++;
+     num_total_coins++;
+    }
+   } while (value >= coin_10);
+
+  do
+   {
+    if (value >= coin_05)
+    {
+     value -= coin_05;
+     num_coins_05 ++;
+     num_total_coins ++;
+    }
+   } while (value >= coin_05);
+
+  do
+   {
+    if (value >= coin_01)
+    {
+     value -= coin_01;
+     num_coins_01++;
+     num_total_coins++;
+    }
+   } while (value >= coin_01);  
+                          
+                            
+  printf("O numero minimo desse troco pode ser dado = %i. E isso eh igual a:\n",num_total_coins);
+
+  printf("%i moedas de 01 centavo.\n",num_coins_01);
+  printf("%i moedas de 05 centavos.\n",num_coins_05);
+  printf("%i moedas de 10 centavos.\n",num_coins_10);
+  printf("%i moedas de 25 centavos\n",num_coins_25);
+  printf("Value = %.2f \n",value);
+  
+  return 0;
+}

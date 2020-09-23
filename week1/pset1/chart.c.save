@@ -1,0 +1,25 @@
+
+//chart.c
+
+#include <stdii.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	int mf,fm,ff,mm;
+
+	printf("M procurando F: ");
+	scanf(" %n", &mf);
+
+	printf("F procurando M: ");
+	scanf(" %n", &fm);
+
+	printf("F procurando F: ");
+	scanf(" %n", &ff);
+
+	printf("M procurando M: ");
+	scanf(" %n", &mm);
+
+
+
+}
