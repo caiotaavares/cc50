@@ -38,7 +38,7 @@ int d;
 // prototypes
 void clear(void);
 void greet(void);
-void init(void);
+void init(int d);
 void draw(void);
 bool move(int tile);
 bool won(void);
@@ -67,7 +67,7 @@ main(int argc, char *argv[])
     }
 
     // initialize the board
-    init();
+    init(d);
 
     // accept moves until game is won
     while (true)
@@ -136,9 +136,26 @@ greet(void)
  */
 
 void
-init(void)
+init(int d)
 {
-    // TODO
+    	// TODO
+
+	int board[d][d];
+	if(d == 3)
+	{
+		board[d][d] = 	{{8,6,7},
+				 {5,3,2},
+				 {1,4,}};
+	}
+
+	//L0 C0, L0 C1, L0 C2
+	printf("%d	%d	%d", board[0][0], board[0][1], board[0][2]);
+
+	//L1 C0, L1 C1, L1 C2
+	printf("%d	%d	%d", board[1][0], board[1][1], board[1][2]);
+
+	//L2 C0, L2 C1, L2 C2
+	printf("%d	%d	%d", board[2][0], board[2][1], board[2][2]);
 }
 
 
