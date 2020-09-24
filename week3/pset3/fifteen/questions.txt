@@ -3,7 +3,7 @@ questions.txt
 CC50
 Set de Problemas 3
 
-i.   TODO
+i.   
 ii.  TODO
-iii. TODO
-iv.  TODO
+iii. greet function.
+iv.  the functions draw, init, move and won.
