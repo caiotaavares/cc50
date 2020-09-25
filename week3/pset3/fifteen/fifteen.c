@@ -38,7 +38,7 @@ int d;
 // prototypes
 void clear(void);
 void greet(void);
-void init(int d);
+void init(void);
 void draw(void);
 bool move(int tile);
 bool won(void);
@@ -54,7 +54,7 @@ main(int argc, char *argv[])
     if (argc != 2)
     {
         printf("Usage: %s d\n", argv[0]);
-        return 1;
+        return 1;// prototypes
     }
 
     // ensure valid dimensions
@@ -67,7 +67,7 @@ main(int argc, char *argv[])
     }
 
     // initialize the board
-    init(d);
+    init();
 
     // accept moves until game is won
     while (true)
@@ -136,26 +136,26 @@ greet(void)
  */
 
 void
-init(int d)
+init(void)
 {
-    	// TODO
+    	// total_spaces get the number of spaces
+	int total_spaces = d * d;
 
-	int board[d][d];
-	if(d == 3)
+	//tho for cicles to get the tiles to board[i][j]
+	for(int i = 0; i < d; i ++)
 	{
-		board[d][d] = 	{{8,6,7},
-				 {5,3,2},
-				 {1,4,}};
+		for(int j = 0; j < d; j ++)
+		{
+			board[i][j] = --total_spaces;
+		}
 	}
 
-	//L0 C0, L0 C1, L0 C2
-	printf("%d	%d	%d", board[0][0], board[0][1], board[0][2]);
-
-	//L1 C0, L1 C1, L1 C2
-	printf("%d	%d	%d", board[1][0], board[1][1], board[1][2]);
-
-	//L2 C0, L2 C1, L2 C2
-	printf("%d	%d	%d", board[2][0], board[2][1], board[2][2]);
+	//if the number os spaces even, swap 2 and 1
+	if ((d * d) % 2 == 0)
+	{
+		board[d - 1][d - 3] = 1;
+		board[d - 1][d - 2] = 2;
+	}
 }
 
 
@@ -166,20 +166,87 @@ init(int d)
 void
 draw(void)
 {
-    // TODO
+    	//to loop through the game numbers
+	for (int i = 0; i < d; i ++)
+	{
+		for (int j = 0; j < d; j ++)
+		{
+			//to print the space when board == 0
+			if (board[i][j] == 0)
+			{
+				printf("    ");
+			}
+			//to print the respective board[d][d] numbers
+			else
+			{
+				printf("%4i", board[i][j]);
+			}
+		}
+		printf("\n");
+	}
 }
 
 
-/* 
+/*
  * If tile borders empty space, moves tile and returns true, else
- * returns false. 
+ * returns false.
  */
 
 bool
 move(int tile)
 {
-    // TODO
-    return false;
+    	//verify if the tile command its valid
+	if (tile < 1 || tile > d * d)
+	{
+		printf("Whrong command\n");
+		return false;
+	}
+
+	int row, column = 0;
+
+	//search in board for row  and column
+	for (int i = 0; i < d; i ++)
+	{
+		for (int j = 0; j < d; j ++)
+		{
+			if (board[i][j] == tile)
+			{
+				row = i;
+				column = j;
+			}
+		}
+	}
+
+	//chec if in row and column empty spaces
+	if (row - 1 >= 0 &&board[row -1][column] == 0)
+	{
+		board[row -1][column] = board[row][column];
+		board[row][column] = 0;
+		return true;
+	}
+
+	if (column - 1 >= 0 && board[row][column - 1] == 0)
+	{
+		board[row][column - 1] = board[row][column];
+		board[row][column] = 0;
+		return true;
+	}
+
+	if (row + 1 < d && board[row + 1][column] == 0)
+	{
+		board[row + 1][column] = board[row][column];
+		board[row][column] = 0;
+		return true;
+	}
+
+	if (column + 1 < d && board[row][column + 1] == 0)
+	{
+		board[row][column +1] = board[row][column];
+		board[row][column] = 0;
+		return true;
+	}
+
+    	return false;
 }
 
 
@@ -191,6 +258,18 @@ move(int tile)
 bool
 won(void)
 {
-    // TODO
-    return false;
+	int count = 0;
+
+	//search for board values in their correct spaces
+	for (int i = 0; i < d; i ++)
+	{
+		for (int j = 0; j < d; j ++)
+		{
+			if (++ count != (d * d) && board[i][j] != count)
+			{
+				return false;
+			}
+		}
+	}
+    	return true;
 }
