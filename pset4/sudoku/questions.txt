@@ -1,0 +1,50 @@
+
+Respostas
+
+I - Quando strcmp(string1, string2) retorna um valor menor do que zero
+a string 1 é maior do que a string 2, quando retorna um valor maior do
+que zero a string2 é maior do que a string1 e quando o valor retornado
+for igual a zero as duas strings são iguais.
+
+
+II - 
+
+int max = (!strcmp(g.level, "debug")) ? 9 : 1024;
+Eu reescreveria da seguinte forma:
+
+
+int
+main(void)
+{
+	int max;
+	if (strcmp(g.level, "debug") == 0)
+	{
+		max = 9;
+	}
+
+	else
+	{
+		max = 1024
+	}
+}
+Ou seja, a primeira função é uma forma resumida de realizar a segunda em
+apenas uma linha.
+
+III - Sabendo que "A função sscanf é idêntica  afunção scanf, com a
+diferença de que os dados lidos são strings. O valor devolvido por scanf
+ou sscanf é igual ao número de strings que receberam algum valor".
+Então, para que " sscanf(argv[2], " %d %c", &g.number, &c) " retorne
+valor 2, tanto g.number quanto c precisam ter algum valor atribuido
+, o que caracteriza um bug, pois o programa funciona com c definido
+mas sem valor, então sscanf deve retornar 1.
+
+IV - os atributos que representam as coordenadas do cursor no sudoku
+são: g.top, g.y, g.left e g.x.
+
+V - a função " move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3)); ".
+
+VI - Dentro do switch que se inicia na linha 162 eu poderia incrementar
+elementos case para dar outras funções a outras teclas
+
+VII - debug#1 tem 1 espaço livre, debug#2 tem dois espaços livres
+e naturalmente debug#9 tem 9 espaços livres.
