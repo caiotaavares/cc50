@@ -89,6 +89,13 @@ main(int argc, char *argv[])
         printf("Tile to move: ");
         int tile = GetInt();
 
+	//GOD mode
+	if (tile = GOD)
+	{
+		
+	}
+
+
         // move if possible, else report illegality
         if (!move(tile))
         {
