@@ -56,7 +56,6 @@ bool load_board(void);
 void handle_signal(int signum);
 void log_move(int ch);
 void redraw_all(void);
-void reset_pos(void);
 bool restart_game(void);
 void show_banner(char *b);
 void show_cursor(void);
@@ -148,8 +147,6 @@ main(int argc, char *argv[])
 
     // let the user play!
     int ch;
-    int posy = 0;
-    int posx = 0;
     do
     {
         // refresh the screen
@@ -161,63 +158,11 @@ main(int argc, char *argv[])
         // capitalize input to simplify cases
         ch = toupper(ch);
 
-        if (isdigit(ch))
-        {
-            int num = ch;
-            g.board[g.y][g.x] = num;
-            redraw_all();
-        }
-
         // process user's input
         switch (ch)
         {
-            //move the cursor to down
-            case KEY_DOWN:
-                if (posx < 4)
-                {
-                    g.y++;
-                    move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
-                    posx++;
-                    break;
-                }
-                else
-                    break;
-            // move the cursor to up
-            case KEY_UP:
-                 if (posx > -4)
-                 {
-                     g.y--;
-                     move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
-                     posx--;
-                     break;
-                 }
-                 else
-                     break;
-            // move the cursor to left
-            case KEY_LEFT:
-                 if (posy > -4)
-                 {
-                     g.x--;
-                     move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
-                     posy--;
-                     break;
-                 }
-                 else
-                     break;
-            //move the cursor to right
-            case KEY_RIGHT:
-                 if (posy < 4)
-                 {
-                     g.x++;
-                     move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
-                     posy++;
-                     break;
-                 }
-                 else
-                     break;
-
             // start a new game
-            case 'N':
+            case 'N': 
                 g.number = rand() % max + 1;
                 if (!restart_game())
                 {
@@ -225,20 +170,16 @@ main(int argc, char *argv[])
                     fprintf(stderr, "Could not load board from disk!\n");
                     return 6;
                 }
-                posx = 0;
-                posy = 0;
                 break;
 
             // restart current game
-            case 'R':
+            case 'R': 
                 if (!restart_game())
                 {
                     shutdown();
                     fprintf(stderr, "Could not load board from disk!\n");
                     return 6;
                 }
-                posx = 0;
-                posy = 0;
                 break;
 
             // let user manually redraw screen with ctrl-L
@@ -264,23 +205,7 @@ main(int argc, char *argv[])
     printf("\nkthxbai!\n\n");
     return 0;
 }
-/*
- * Verify the number on cursor
- */
 
-
-/*
- * Reset the x and y position
- */
-
-void
-reset_pos(void)
-{
-    int posx;
-    int posy;
-    posx = 0;
-    posy = 0;
-}
 
 /*
  * Draw's the game's board.
@@ -593,6 +518,8 @@ show_cursor(void)
 {
     // restore cursor's location
     move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
+
+    if ()
 }
 
 
