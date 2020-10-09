@@ -161,10 +161,10 @@ main(int argc, char *argv[])
         // capitalize input to simplify cases
         ch = toupper(ch);
 
+        // whrite the numbers input
         if (isdigit(ch))
         {
-            int num = ch;
-            g.board[g.y][g.x] = num;
+            g.board[g.y][g.x] = ch - '0';
             redraw_all();
         }
 
@@ -176,45 +176,40 @@ main(int argc, char *argv[])
                 if (posx < 4)
                 {
                     g.y++;
-                    move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
                     posx++;
+                    show_cursor();
                     break;
                 }
-                else
-                    break;
+
             // move the cursor to up
             case KEY_UP:
                  if (posx > -4)
                  {
                      g.y--;
-                     move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
                      posx--;
+                     show_cursor();
                      break;
                  }
-                 else
-                     break;
+
             // move the cursor to left
             case KEY_LEFT:
                  if (posy > -4)
                  {
                      g.x--;
-                     move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
                      posy--;
+                     show_cursor();
                      break;
                  }
-                 else
-                     break;
+
             //move the cursor to right
             case KEY_RIGHT:
                  if (posy < 4)
                  {
                      g.x++;
-                     move(g.top + g.y + 1 + g.y/3, g.left + 2 + 2*(g.x + g.x/3));
                      posy++;
+                     show_cursor();
                      break;
                  }
-                 else
-                     break;
 
             // start a new game
             case 'N':
@@ -264,8 +259,9 @@ main(int argc, char *argv[])
     printf("\nkthxbai!\n\n");
     return 0;
 }
+
 /*
- * Verify the number on cursor
+ * 
  */
 
 
