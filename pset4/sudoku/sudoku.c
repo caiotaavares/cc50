@@ -34,7 +34,7 @@ struct
 
     // the game's board
     int board[9][9];
-
+    
     // the board's number
     int number;
 
@@ -45,24 +45,37 @@ struct
     int y, x;
 } g;
 
+struct
+{
+    // reference board
+    int reference[9][9];
+    
+    // in game
+    bool ingame;
+} r;
 
 // prototypes
+void del_num(void); // delete a value
 void draw_grid(void);
 void draw_borders(void);
 void draw_logo(void);
 void draw_numbers(void);
 void hide_banner(void);
 bool load_board(void);
+void make_move (int *ch); // make a move
+void playing(void);   //player functions
 void handle_signal(int signum);
 void log_move(int ch);
 void redraw_all(void);
-void reset_pos(void);
+void make_ref_board(void); // make a reference board
+void reset_pos(void); //reset a cursor position
 bool restart_game(void);
 void show_banner(char *b);
 void show_cursor(void);
 void shutdown(void);
 bool startup(void);
-
+void write_board(int ch);   // put numbers on board
+bool won(void); // verify if the user won
 
 /*
  * Main driver for the game.
@@ -150,6 +163,10 @@ main(int argc, char *argv[])
     int ch;
     int posy = 0;
     int posx = 0;
+    
+    // make a ref board
+    make_ref_board();
+    
     do
     {
         // refresh the screen
@@ -161,13 +178,6 @@ main(int argc, char *argv[])
         // capitalize input to simplify cases
         ch = toupper(ch);
 
-        // whrite the numbers input
-        if (isdigit(ch))
-        {
-            g.board[g.y][g.x] = ch - '0';
-            redraw_all();
-        }
-
         // process user's input
         switch (ch)
         {
@@ -178,8 +188,8 @@ main(int argc, char *argv[])
                     g.y++;
                     posx++;
                     show_cursor();
-                    break;
                 }
+                break;
 
             // move the cursor to up
             case KEY_UP:
@@ -188,8 +198,8 @@ main(int argc, char *argv[])
                      g.y--;
                      posx--;
                      show_cursor();
-                     break;
                  }
+                 break;
 
             // move the cursor to left
             case KEY_LEFT:
@@ -198,18 +208,31 @@ main(int argc, char *argv[])
                      g.x--;
                      posy--;
                      show_cursor();
-                     break;
                  }
+                 break;
 
-            //move the cursor to right
+            // move the cursor to right
             case KEY_RIGHT:
                  if (posy < 4)
                  {
                      g.x++;
                      posy++;
                      show_cursor();
-                     break;
                  }
+                 break;
+                 
+            // write values on board
+            case '1': case '2': case '3': case '4':case '5':
+            case '6': case '7': case '8': case '9':
+                {
+                    write_board(ch);
+                    break;
+                }
+                 
+            // delete a value
+            case KEY_BACKSPACE: case KEY_DC: case '.': case '0':
+                del_num();
+                break;
 
             // start a new game
             case 'N':
@@ -220,8 +243,10 @@ main(int argc, char *argv[])
                     fprintf(stderr, "Could not load board from disk!\n");
                     return 6;
                 }
-                posx = 0;
-                posy = 0;
+                reset_pos();
+                make_ref_board();
+                make_move(&ch);
+                playing();
                 break;
 
             // restart current game
@@ -232,8 +257,9 @@ main(int argc, char *argv[])
                     fprintf(stderr, "Could not load board from disk!\n");
                     return 6;
                 }
-                posx = 0;
-                posy = 0;
+                reset_pos();
+                make_move(&ch);
+                playing();
                 break;
 
             // let user manually redraw screen with ctrl-L
@@ -258,24 +284,6 @@ main(int argc, char *argv[])
     // that's all folks
     printf("\nkthxbai!\n\n");
     return 0;
-}
-
-/*
- * 
- */
-
-
-/*
- * Reset the x and y position
- */
-
-void
-reset_pos(void)
-{
-    int posx;
-    int posy;
-    posx = 0;
-    posy = 0;
 }
 
 /*
@@ -683,3 +691,125 @@ startup(void)
     // w00t
     return true;
 }
+
+/*
+ * Reset the x and y position
+ */
+
+void
+reset_pos(void)
+{
+    int posx;
+    int posy;
+    posx = 0;
+    posy = 0;
+}
+
+/*
+ * Create a refeence board
+ */
+
+void
+make_ref_board(void)
+{
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            r.reference[i][j] = g.board[i][j];
+        }
+    }
+}
+
+/*
+ * Player input functions
+ */
+
+void
+playing()
+{
+    r.ingame = false;
+    do {
+        //game functions
+    
+    } while (r.ingame == false);
+    
+    if (won() == true)
+    {
+        show_banner("Congrats, YOU WON!!");
+    }
+}
+
+/*
+ *
+ */
+void
+make_move (int *ch)
+{
+    // getch a char
+    *ch = getch();
+    
+    switch (*ch)
+    {
+        // finishim
+    }
+}
+
+/*
+ * Del numbers of board
+ */
+
+void
+del_num(void)
+{
+    if (r.reference[g.y][g.x] > 0)
+    {
+        show_banner("It's impossible delete a original number!");
+    }
+    
+    else
+    {
+        g.board[g.y][g.x] = 0;
+        redraw_all();
+    }
+}
+
+/*
+ * write numbers on board
+ */
+
+void
+write_board(int ch)
+{
+    if (r.reference[g.y][g.x] > 0)
+    {
+    show_banner("It's impossible delete a original number!");
+    }
+
+    else
+    {
+        g.board[g.y][g.x] = ch - '0';
+        redraw_all();
+    }
+}
+
+/*
+ * Verify if the user won the game
+ */
+
+bool
+won(void)
+{
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            if (g.board[i][j] == 0)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
