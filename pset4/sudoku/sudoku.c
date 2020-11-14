@@ -61,20 +61,21 @@ void draw_borders(void);
 void draw_logo(void);
 void draw_numbers(void);
 void hide_banner(void);
+bool isvalid(int *ch);
 bool load_board(void);
 void make_move (int *ch); // make a move
-void playing(void);   //player functions
+void playing(int *ch);   //player functions
 void handle_signal(int signum);
 void log_move(int ch);
 void redraw_all(void);
 void make_ref_board(void); // make a reference board
-void reset_pos(void); //reset a cursor position
+//void reset_pos(void); //reset a cursor position
 bool restart_game(void);
 void show_banner(char *b);
 void show_cursor(void);
 void shutdown(void);
 bool startup(void);
-void write_board(int ch);   // put numbers on board
+void write_board(int *ch);   // put numbers on board
 bool won(void); // verify if the user won
 
 /*
@@ -161,14 +162,13 @@ main(int argc, char *argv[])
 
     // let the user play!
     int ch;
-    int posy = 0;
-    int posx = 0;
     
     // make a ref board
     make_ref_board();
     
     do
     {
+    
         // refresh the screen
         refresh();
 
@@ -177,62 +177,14 @@ main(int argc, char *argv[])
 
         // capitalize input to simplify cases
         ch = toupper(ch);
+        
+        // first player move
+        playing(&ch);
+        //reset_pos();
 
         // process user's input
         switch (ch)
         {
-            //move the cursor to down
-            case KEY_DOWN:
-                if (posx < 4)
-                {
-                    g.y++;
-                    posx++;
-                    show_cursor();
-                }
-                break;
-
-            // move the cursor to up
-            case KEY_UP:
-                 if (posx > -4)
-                 {
-                     g.y--;
-                     posx--;
-                     show_cursor();
-                 }
-                 break;
-
-            // move the cursor to left
-            case KEY_LEFT:
-                 if (posy > -4)
-                 {
-                     g.x--;
-                     posy--;
-                     show_cursor();
-                 }
-                 break;
-
-            // move the cursor to right
-            case KEY_RIGHT:
-                 if (posy < 4)
-                 {
-                     g.x++;
-                     posy++;
-                     show_cursor();
-                 }
-                 break;
-                 
-            // write values on board
-            case '1': case '2': case '3': case '4':case '5':
-            case '6': case '7': case '8': case '9':
-                {
-                    write_board(ch);
-                    break;
-                }
-                 
-            // delete a value
-            case KEY_BACKSPACE: case KEY_DC: case '.': case '0':
-                del_num();
-                break;
 
             // start a new game
             case 'N':
@@ -243,10 +195,9 @@ main(int argc, char *argv[])
                     fprintf(stderr, "Could not load board from disk!\n");
                     return 6;
                 }
-                reset_pos();
-                make_ref_board();
-                make_move(&ch);
-                playing();
+                //make_ref_board();
+                playing(&ch);
+                //reset_pos();
                 break;
 
             // restart current game
@@ -257,9 +208,8 @@ main(int argc, char *argv[])
                     fprintf(stderr, "Could not load board from disk!\n");
                     return 6;
                 }
-                reset_pos();
-                make_move(&ch);
-                playing();
+                playing(&ch);
+                //reset_pos();
                 break;
 
             // let user manually redraw screen with ctrl-L
@@ -696,14 +646,14 @@ startup(void)
  * Reset the x and y position
  */
 
-void
-reset_pos(void)
-{
-    int posx;
-    int posy;
-    posx = 0;
-    posy = 0;
-}
+//void
+//reset_pos(void)
+//{
+    //int posx;
+    //int posy;
+    //posx = 0;
+    //posy = 0;
+//}
 
 /*
  * Create a refeence board
@@ -726,17 +676,27 @@ make_ref_board(void)
  */
 
 void
-playing()
+playing(int *ch)
 {
-    r.ingame = false;
+    make_ref_board();
+    r.ingame = true;
+    hide_banner();
     do {
-        //game functions
-    
-    } while (r.ingame == false);
-    
+        make_move(ch);
+        show_cursor();
+    } while (r.ingame == true && !won());
     if (won() == true)
     {
+        hide_banner();
         show_banner("Congrats, YOU WON!!");
+        *ch = getch();
+        *ch = toupper(*ch);
+        return;        
+    }
+    else
+    {
+        *ch = toupper(*ch);
+        return;
     }
 }
 
@@ -751,8 +711,77 @@ make_move (int *ch)
     
     switch (*ch)
     {
-        // finishim
+    
+            //move the cursor to down
+            case KEY_DOWN:
+                g.y++;
+                if (g.y > 8)
+                {
+                    g.y--;
+                }
+                //show_cursor();
+                break;
+
+            // move the cursor to up
+            case KEY_UP:
+                 g.y--;
+                 if (g.y < 0)
+                 {
+                     g.y++;
+                 }
+                 //show_cursor();
+                 break;
+
+            // move the cursor to left
+            case KEY_LEFT:
+                g.x--;
+                 if (g.x < 0)
+                 {
+                     g.x++;
+                 }
+                 //show_cursor();
+                 break;
+
+            // move the cursor to right
+            case KEY_RIGHT:
+                g.x++;
+                if (g.x > 8)
+                {
+                    g.x--;
+                }
+                 //show_cursor();
+                 break;
+                 
+            // write values on board
+            case '1': case '2': case '3': case '4':case '5':
+            case '6': case '7': case '8': case '9':
+                {
+                    if (isvalid(ch))
+                    {
+                        write_board(ch);
+                    }
+                    break;
+                }
+                 
+            // delete a value
+            case KEY_BACKSPACE: case KEY_DC: case '.': case '0':
+                del_num();
+                break;
+                
+            // quitting a current game
+            case 'Q': case 'q': case 'R':
+            case 'r': case 'N': case 'n':
+                r.ingame = false;
+                //hide_banner();
+                //reset_pos();
+                break;
+                
+            default:
+                show_cursor();
+                break;
+            
     }
+    return;
 }
 
 /*
@@ -779,7 +808,7 @@ del_num(void)
  */
 
 void
-write_board(int ch)
+write_board(int *ch)
 {
     if (r.reference[g.y][g.x] > 0)
     {
@@ -788,8 +817,34 @@ write_board(int ch)
 
     else
     {
-        g.board[g.y][g.x] = ch - '0';
+        g.board[g.y][g.x] = (*ch) - '0';
         redraw_all();
+    }   
+}
+
+/*
+ * Verify if the move is valid
+ */
+
+bool
+isvalid(int *ch)
+{
+    for (int y = g.y, final = y + 9; y <= final; y++)
+    {
+        if ((*ch - '0') == g.board[y][g.x])
+        {
+            show_banner("Vertical error!\n");
+            return false;
+        }
+    }
+    
+    for (int x = g.x, final = x + 9; x <= final; x++)
+    {
+        if ((*ch - '0') == g.board[g.y][x])
+        {
+            show_banner("Horizontal error\n");
+            return false;
+        }
     }
 }
 
